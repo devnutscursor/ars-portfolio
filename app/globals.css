@@ -1,0 +1,241 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens. Warm near-black, bone white, one vermilion accent.
+   Deliberately no blue/purple gradient anywhere.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-ink: #0b0a09;
+  --color-ink-2: #131110;
+  --color-ink-3: #1b1917;
+  --color-bone: #efe9e1;
+  --color-ash: #8e857a;
+  --color-ash-dim: #5f584f;
+  --color-ember: #ff5c26;
+  --color-ember-soft: #ffb18d;
+  --color-sand: #cbb9a2;
+
+  --font-display: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, "SF Mono", monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    --rule: color-mix(in oklab, var(--color-bone) 13%, transparent);
+    --rule-strong: color-mix(in oklab, var(--color-bone) 24%, transparent);
+    --gutter: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --gutter: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    :root {
+      --gutter: 4rem;
+    }
+  }
+
+  * {
+    border-color: var(--rule);
+  }
+
+  html {
+    background-color: var(--color-ink);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: var(--color-ember);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-ember);
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Lenis needs the html element left alone */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  /* Page gutter — every section lines up on the same two edges. */
+  .shell {
+    padding-inline: var(--gutter);
+  }
+
+  /* Small mono metadata type used for labels, indices, captions. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ash);
+  }
+
+  .label-em {
+    color: var(--color-ember);
+  }
+
+  /* Big editorial serif. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+  }
+
+  /* Hairline divider that reads as a printed rule. */
+  .hr {
+    height: 1px;
+    width: 100%;
+    background-color: var(--rule);
+  }
+
+  /* Link with an underline that wipes in from the left. */
+  .wipe {
+    position: relative;
+    display: inline-block;
+  }
+
+  .wipe::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+
+  .wipe:hover::after,
+  .wipe:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Numerals that line up in columns. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+}
+
+@layer utilities {
+  /* Film grain over the whole page — kills the flat "generated" look. */
+  .grain::before {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain-drift 8s steps(6) infinite;
+  }
+
+  @keyframes grain-drift {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    20% {
+      transform: translate(-3%, 2%);
+    }
+    40% {
+      transform: translate(2%, -3%);
+    }
+    60% {
+      transform: translate(-2%, -2%);
+    }
+    80% {
+      transform: translate(3%, 1%);
+    }
+  }
+
+  /* Vertical hairlines that run the height of a section. */
+  .col-lines {
+    background-image: linear-gradient(
+      to right,
+      var(--rule) 1px,
+      transparent 1px
+    );
+  }
+
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  }
+
+  .mask-fade-x {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+  }
+}
+
+/* Scrollbar — thin, in-palette, not the browser default. */
+::-webkit-scrollbar {
+  width: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+::-webkit-scrollbar-thumb {
+  background: #2c2926;
+  border: 2px solid var(--color-ink);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #413c37;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
