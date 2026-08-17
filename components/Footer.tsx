@@ -9,9 +9,6 @@ export default function Footer() {
           <p className="label">
             &copy; MMXXVI {person.name} — {person.location}
           </p>
-          <p className="label hidden md:block">
-            Next.js · Three.js · No database, no CMS
-          </p>
           <a href="#top" className="label wipe text-bone">
             Back to top &#8599;
           </a>
